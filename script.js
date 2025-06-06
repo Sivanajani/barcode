@@ -5,30 +5,24 @@ function onScanSuccess(decodedText, decodedResult) {
   console.log("Gescannter Code:", decodedText);
 
   html5QrcodeScanner.clear().then(() => {
-    const params = new URLSearchParams(window.location.search);
-    const redirect = params.get("redirect");
+    // Wenn als Popup geöffnet:
+    if (window.opener) {
+      // Sende den Barcode an das Hauptfenster
+      window.opener.postMessage(
+        { type: "barcode-scan", barcode: decodedText },
+        "*" // oder spezifische URL für mehr Sicherheit
+      );
 
-    if (redirect) {
-      const targetUrl = `${redirect}?barcode=${encodeURIComponent(decodedText)}`;
-
-      // Wenn als Popup geöffnet: opener verwenden und Fenster schließen
-      if (window.opener) {
-        window.opener.location.href = targetUrl;
-        setTimeout(() => window.close(), 300); // leicht verzögert schließen
-      } else {
-        // Wenn kein opener: normale Weiterleitung
-        window.location.href = targetUrl;
-      }
+      // Schließe das Scanner-Fenster nach kurzer Pause
+      setTimeout(() => window.close(), 300);
     } else {
-      console.warn("Kein redirect-Parameter gefunden.");
+      console.warn("Kein opener gefunden.");
     }
   });
 }
 
-// Scanner initialisieren
 const html5QrcodeScanner = new Html5QrcodeScanner(
   "reader",
   { fps: 10, qrbox: 250 }
 );
-
 html5QrcodeScanner.render(onScanSuccess);
