@@ -1,0 +1,12 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin-top: 30px;
+  background: #f4f4f4;
+}
+
+#reader {
+  margin: auto;
+  border: 3px solid #333;
+  border-radius: 10px;
+}
